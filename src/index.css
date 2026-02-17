@@ -1,10 +1,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap");
 @import "tailwindcss";
 
-body {
+body, input {
   font-family: "Geist", sans-serif;
+}
+
+#app {
+  @apply h-screen w-screen bg-linear-to-br from-slate-950 to-gray-950 text-white flex flex-col;
 }
 
 @theme {
   --font-mono: "Geist Mono", monospace;
+}
+
+button {
+  @apply cursor-pointer hover:scale-110 transition-all active:opacity-80;
+}
+
+.radio-btn {
+  @apply hover:scale-none;
 }
