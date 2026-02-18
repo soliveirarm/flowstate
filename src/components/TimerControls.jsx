@@ -4,25 +4,27 @@ import { Button } from "./Button"
 export const TimerControls = ({
   phase,
   isTimerOn,
-  startFocus,
+  startTimer,
   endFocus,
-  startBreak,
   endBreak,
 }) => {
-  if (phase === "focus") {
-    return !isTimerOn ? (
-      <Button onClick={startFocus} Icon={Play} title={"Start Focus Session"} />
-    ) : (
-      <Button onClick={endFocus} Icon={Square} title={"End Focus Session"} />
-    )
-  } else if (phase === "break") {
-    return !isTimerOn ? (
-      <div className="flex gap-8">
-        <Button onClick={startBreak} Icon={Play} title={"Start Break"} />
-        <Button onClick={endBreak} Icon={FastForward} title={"Skip Break"} />
-      </div>
-    ) : (
-      <Button onClick={endBreak} Icon={Square} />
+  if (isTimerOn) {
+    const action = phase === "focus" ? endFocus : endBreak
+    return (
+      <Button onClick={action} Icon={Square} title={`End ${phase} Session`} />
     )
   }
+
+  if (phase === "focus") {
+    return (
+      <Button onClick={startTimer} Icon={Play} title="Start focus session" />
+    )
+  }
+
+  return (
+    <div className="flex gap-8">
+      <Button onClick={startTimer} Icon={Play} title="Start break" />
+      <Button onClick={endBreak} Icon={FastForward} title="Skip break" />
+    </div>
+  )
 }
