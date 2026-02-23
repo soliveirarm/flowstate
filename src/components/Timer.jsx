@@ -11,7 +11,7 @@ export const Timer = ({ time }) => {
   const { h, m, s } = displayTime(time)
 
   return (
-    <div className="text-5xl font-mono font-light flex gap-4">
+    <div className="text-6xl font-mono font-light flex gap-4">
       {h === 0 && <TimeBlock value={h} measure="h" />}
       <TimeBlock value={m} measure="m" />
       <TimeBlock value={s} measure="s" />

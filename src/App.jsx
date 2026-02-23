@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useLocalStorage } from "@uidotdev/usehooks"
 import { displayTime } from "./utils/display-time"
-import { fireFocusNotification } from "./utils/fire-focus-notification"
+import { notify } from "./utils/notify"
 
 import { Header } from "./components/Header"
 import { BottomBar } from "./components/BottomBar"
@@ -20,7 +20,6 @@ export const App = () => {
   const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false)
 
   const [isRadioOpen, setIsRadioOpen] = useState(false)
-  const [selectedRadio, setSelectedRadio] = useState("Hip Hop")
 
   const [breakRatio, setBreakRatio] = useLocalStorage("FS_BREAK_RATIO", 5)
   const [isSoundOn, setIsSoundOn] = useLocalStorage("FS_IS_SOUND_ON", false)
@@ -72,9 +71,6 @@ export const App = () => {
     }
   }
 
-  const notificationsAllowed =
-    areNotificationsOn && Notification.permission === "granted"
-
   useEffect(() => {
     if (!isTimerOn) return
 
@@ -86,7 +82,8 @@ export const App = () => {
         if (phase === "break") {
           if (prevTime <= 0) {
             if (isSoundOn) breakIsOver.play()
-            if (notificationsAllowed) fireFocusNotification()
+            notify(areNotificationsOn)
+
             setIsTimerOn(false)
             setPhase("focus")
             return 0
@@ -99,13 +96,17 @@ export const App = () => {
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [isTimerOn, phase, isSoundOn, notificationsAllowed])
+  }, [isTimerOn, phase, isSoundOn, areNotificationsOn])
 
   useEffect(() => {
     if (!isTimerOn) document.title = "flowstate"
     else {
       const { h, m, s } = displayTime(time)
-      document.title = `${h}:${m}:${s} - flowstate`
+      let timer
+      if (s < 60 && m == 0) timer = `${s}s`
+      else if (h === 0) timer = `${m}m`
+      else timer = `${h}h${m}m`
+      document.title = `${timer} - flowstate`
     }
   })
 
@@ -114,7 +115,7 @@ export const App = () => {
       <Header />
 
       <main className="grow self-center flex flex-col items-center justify-center gap-8">
-        <h2 className="capitalize text-5xl font-light">{phase}</h2>
+        <h2 className="capitalize text-4xl font-light">{phase}</h2>
         <Timer time={time} />
         <TimerControls
           phase={phase}
@@ -125,12 +126,7 @@ export const App = () => {
         />
       </main>
 
-      {isRadioOpen && (
-        <Radio
-          selectedRadio={selectedRadio}
-          setSelectedRadio={setSelectedRadio}
-        />
-      )}
+      <Radio isOpen={isRadioOpen} />
 
       {isSettingsMenuOpen && (
         <Settings
