@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useLocalStorage } from "@uidotdev/usehooks"
 import { displayTime } from "./utils/display-time"
 import { notify } from "./utils/notify"
@@ -13,6 +13,8 @@ import { Settings } from "./components/Settings"
 const breakIsOver = new Audio("./break-is-over.mp3")
 
 export const App = () => {
+  const startTimeRef = useRef(null)
+  const initialTimeRef = useRef(0)
   const [time, setTime] = useState(0)
   const [phase, setPhase] = useState("focus")
   const [isTimerOn, setIsTimerOn] = useState(false)
@@ -32,7 +34,11 @@ export const App = () => {
     Notification.permission === "denied",
   )
 
-  const startTimer = () => setIsTimerOn(true)
+  const startTimer = () => {
+    startTimeRef.current = performance.now()
+    initialTimeRef.current = time
+    setIsTimerOn(true)
+  }
 
   const endFocus = () => {
     setIsTimerOn(false)
@@ -74,41 +80,49 @@ export const App = () => {
   useEffect(() => {
     if (!isTimerOn) return
 
-    let interval = null
+    let animationFrameId
 
-    interval = setInterval(() => {
-      setTime((prevTime) => {
-        if (phase === "focus") return prevTime + 1
-        if (phase === "break") {
-          if (prevTime <= 0) {
-            if (isSoundOn) breakIsOver.play()
-            notify(areNotificationsOn)
+    const update = () => {
+      const now = performance.now()
+      const elapsedSeconds = Math.floor((now - startTimeRef.current) / 1000)
 
-            setIsTimerOn(false)
-            setPhase("focus")
-            return 0
-          }
-          return prevTime - 1
+      if (phase === "focus") setTime(initialTimeRef.current + elapsedSeconds)
+
+      if (phase === "break") {
+        const remaining = initialTimeRef.current - elapsedSeconds
+
+        if (remaining <= 0) {
+          if (isSoundOn) breakIsOver.play()
+          notify(areNotificationsOn)
+
+          setIsTimerOn(false)
+          setPhase("focus")
+          setTime(0)
+          return
         }
 
-        return prevTime
-      })
-    }, 1000)
+        setTime(remaining)
+      }
 
-    return () => clearInterval(interval)
+      animationFrameId = requestAnimationFrame(update)
+    }
+
+    animationFrameId = requestAnimationFrame(update)
+
+    return () => cancelAnimationFrame(animationFrameId)
   }, [isTimerOn, phase, isSoundOn, areNotificationsOn])
 
   useEffect(() => {
-    if (!isTimerOn) document.title = "flowstate"
-    else {
-      const { h, m, s } = displayTime(time)
-      let timer
-      if (s < 60 && m == 0) timer = `${s}s`
-      else if (h === 0) timer = `${m}m`
-      else timer = `${h}h${m}m`
-      document.title = `${timer} - flowstate`
+    if (!isTimerOn) {
+      document.title = "flowstate"
+      return
     }
-  })
+
+    const { h, m } = displayTime(time)
+
+    const timer = h === "00" ? `${m}m` : `${h}h${m}m`
+    document.title = `${timer} - flowstate`
+  }, [time, isTimerOn])
 
   return (
     <>
