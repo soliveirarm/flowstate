@@ -6,6 +6,6 @@ export const Button = ({
   disabled = false,
 }) => (
   <button onClick={onClick} title={title} disabled={disabled}>
-    {Icon && <Icon className={`${className} text-violet-300`} />}
+    {Icon && <Icon className={`${className} text-violet-400 dark:text-violet-300`} />}
   </button>
 )

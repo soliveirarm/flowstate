@@ -2,7 +2,7 @@ import { displayTime } from "../utils/display-time"
 
 const TimeBlock = ({ value, measure }) => (
   <div>
-    <span className="text-violet-100">{value}</span>
+    <span className="text-slate-800 dark:text-gray-100">{value}</span>
     <span className="font-thin text-gray-400">{measure}</span>
   </div>
 )

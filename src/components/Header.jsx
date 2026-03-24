@@ -1,12 +1,16 @@
-import { Waves } from "lucide-react"
+import { ClockPlus } from "lucide-react"
+
+const Accent = ({ text }) => (
+  <div className="text-violet-400 dark:text-violet-300">{text}</div>
+)
 
 export const Header = () => (
   <header className="flex items-center gap-2 px-8 py-4">
-    <Waves className="size-8 text-violet-400" />
-    <div className="text-3xl font-light flex">
-      <div className="text-violet-400">f</div>
+    <ClockPlus className="size-7 text-violet-400" />
+    <div className="dark:text-gray-100 text-3xl font-light flex">
+      <Accent text="f" />
       low
-      <div className="text-violet-400">s</div>
+      <Accent text="s" />
       tate
     </div>
   </header>

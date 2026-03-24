@@ -9,6 +9,7 @@ import { TimerControls } from "./components/TimerControls"
 import { Timer } from "./components/Timer"
 import { Radio } from "./components/Radio"
 import { Settings } from "./components/Settings"
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts"
 
 const breakIsOver = new Audio("./break-is-over.mp3")
 
@@ -33,6 +34,8 @@ export const App = () => {
   const [notificationsDenied, setNotificationsDenied] = useState(
     Notification.permission === "denied",
   )
+
+  const [darkMode, setDarkMode] = useLocalStorage("FS_DARK_MODE", false)
 
   const startTimer = () => {
     startTimeRef.current = performance.now()
@@ -77,6 +80,7 @@ export const App = () => {
     }
   }
 
+  // Timer
   useEffect(() => {
     if (!isTimerOn) return
 
@@ -112,6 +116,7 @@ export const App = () => {
     return () => cancelAnimationFrame(animationFrameId)
   }, [isTimerOn, phase, isSoundOn, areNotificationsOn])
 
+  // document.title text
   useEffect(() => {
     if (!isTimerOn) {
       document.title = "flowstate"
@@ -124,12 +129,28 @@ export const App = () => {
     document.title = `${timer} - flowstate`
   }, [time, isTimerOn])
 
+  // Dark Mode Watcher
+  const toggleDarkMode = () => setDarkMode((prev) => !prev)
+  useEffect(() => {
+    const html = document.documentElement
+    if (darkMode) html.classList.add("dark")
+    else html.classList.remove("dark")
+  }, [darkMode])
+
+  useKeyboardShortcuts({
+    m: toggleDarkMode,
+    r: toggleRadio,
+    s: toggleSettings,
+  })
+
   return (
     <>
       <Header />
 
       <main className="grow self-center flex flex-col items-center justify-center gap-8">
-        <h2 className="capitalize text-4xl font-light">{phase}</h2>
+        <h2 className="text-gray-800 dark:text-violet-100 capitalize text-4xl font-light">
+          {phase}
+        </h2>
         <Timer time={time} />
         <TimerControls
           phase={phase}
@@ -151,6 +172,8 @@ export const App = () => {
           areNotificationsOn={areNotificationsOn}
           handleNotifications={handleNotifications}
           notificationsDenied={notificationsDenied}
+          isDarkModeOn={darkMode}
+          toggleDarkMode={toggleDarkMode}
         />
       )}
 

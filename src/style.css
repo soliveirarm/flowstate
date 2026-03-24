@@ -1,13 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap");
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 body,
 input {
   font-family: "Geist", sans-serif;
 }
 
 #app {
-  @apply h-screen w-screen bg-linear-to-br from-slate-950 to-gray-950 text-white flex flex-col;
+  @apply h-screen w-screen bg-linear-to-br from-white to-slate-50 dark:from-slate-950 dark:to-gray-950 dark:text-white flex flex-col;
 }
 
 @theme {
@@ -18,8 +20,12 @@ button {
   @apply cursor-pointer hover:scale-110 transition-all active:opacity-80;
 }
 
-.radio-btn {
-  @apply hover:scale-none;
+.station-btn {
+  @apply font-semibold rounded-full px-4 py-1.5 grow hover:scale-none bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-600 dark:text-violet-100;
+
+  &.-selected {
+    @apply hover:opacity-90 border-violet-400 dark:border-violet-300 bg-violet-400 dark:bg-violet-300 text-white dark:text-gray-950 inset-shadow-sm inset-shadow-black/20;
+  }
 }
 
 .-disabled {
@@ -35,13 +41,7 @@ button {
   @apply bg-gray-500;
 
   &::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    border-radius: 50%;
-    @apply shadow-md bg-violet-300 ring-violet-300;
+    @apply shadow-md bg-violet-400 rounded-full cursor-pointer appearance-none size-4;
   }
 }
 
