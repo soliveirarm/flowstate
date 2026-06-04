@@ -5,15 +5,16 @@ export function useChangeVolume(isRadioOpen, setVolume, player, volume) {
     const keyDownHandler = (e) => {
       if (!isRadioOpen) return
 
-      if (e.key == "ArrowUp") {
-        if (volume < 100) setVolume((prev) => prev + 5)
-      } else if (e.key == "ArrowDown") {
-        if (volume > 0) setVolume((prev) => prev - 5)
+      if (e.key == "ArrowUp" && volume < 100) {
+        setVolume((prev) => prev + 5)
+      } else if (e.key == "ArrowDown" && volume > 0) {
+        setVolume((prev) => prev - 5)
       }
+
       player.setVolume(volume)
     }
 
-    document.addEventListener("keyup", keyDownHandler)
-    return () => document.removeEventListener("keyup", keyDownHandler)
+    document.addEventListener("keydown", keyDownHandler)
+    return () => document.removeEventListener("keydown", keyDownHandler)
   })
 }
