@@ -9,6 +9,8 @@ import { TimerControls } from "./components/TimerControls"
 import { Timer } from "./components/Timer"
 import { Radio } from "./components/Radio"
 import { Settings } from "./components/Settings"
+import { Task } from "./components/Task"
+
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts"
 
 const breakIsOver = new Audio("./break-is-over.mp3")
@@ -18,6 +20,7 @@ export const App = () => {
   const initialTimeRef = useRef(0)
   const [time, setTime] = useState(0)
   const [phase, setPhase] = useState("focus")
+  const [task, setTask] = useLocalStorage("FS_TASK", "")
   const [isTimerOn, setIsTimerOn] = useState(false)
 
   const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false)
@@ -148,9 +151,7 @@ export const App = () => {
       <Header />
 
       <main className="grow self-center flex flex-col items-center justify-center gap-8">
-        <h2 className="text-gray-800 dark:text-violet-100 capitalize text-4xl font-light">
-          {phase}
-        </h2>
+        <Task task={task} setTask={setTask} isTimerOn={isTimerOn} />
         <Timer time={time} />
         <TimerControls
           phase={phase}
