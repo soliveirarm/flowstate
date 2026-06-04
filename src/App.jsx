@@ -126,11 +126,19 @@ export const App = () => {
       return
     }
 
-    const { h, m } = displayTime(time)
+    const { h, m, s } = displayTime(time)
 
-    const timer = h === "00" ? `${m}m` : `${h}h${m}m`
-    document.title = `${timer} - flowstate`
-  }, [time, isTimerOn])
+    const timer = h === "00" ? `${m}:${s}` : `${h}:${m}:${s}`
+
+    if (task && task.trim() !== "" && phase === "focus") {
+      document.title = `${timer} - ${task}`
+    } else {
+      const phaseText = `
+        ${phase.charAt(0).toUpperCase()}${phase.slice(1)} Time
+      `
+      document.title = `${timer} - ${phaseText}`
+    }
+  }, [time, isTimerOn, task, phase])
 
   // Dark Mode Watcher
   const toggleDarkMode = () => setDarkMode((prev) => !prev)
